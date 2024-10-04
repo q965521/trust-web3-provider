@@ -14,19 +14,22 @@ public struct TrustWeb3Provider {
         public let aptos: AptosConfig
         public let ton: TonConfig
         public let appVersion: String
+        public let autoConnect: Bool
 
         public init(
             ethereum: EthereumConfig,
             solana: SolanaConfig,
             aptos: AptosConfig = AptosConfig(network: "Mainnet", chainId: "1"),
             ton: TonConfig,
-            appVersion: String
+            appVersion: String,
+            autoConnect: Bool
         ) {
             self.ethereum = ethereum
             self.solana = solana
             self.aptos = aptos
             self.ton = ton
             self.appVersion = appVersion
+            self.autoConnect = autoConnect
         }
 
         public struct EthereumConfig: Equatable {
@@ -129,9 +132,7 @@ public struct TrustWeb3Provider {
                 const walletInfo = {
                   deviceInfo: {
                     platform: 'iphone',
-
-                    // TODO: Change to trust
-                    appName: 'OpenMask',
+                    appName: 'trustwalletTon',
                     appVersion: "\(config.appVersion)",
                     maxProtocolVersion: 2,
                     features: [
@@ -143,12 +144,11 @@ public struct TrustWeb3Provider {
                     ],
                   },
                   walletInfo: {
-                    // TODO: Change to trust
-                    name: 'OpenMask',
+                    name: 'Trust',
                     image: 'https://assets-cdn.trustwallet.com/dapps/trust.logo.png',
                     about_url: 'https://trustwallet.com/about-us',
                   },
-                  isWalletBrowser: true,
+                  isWalletBrowser: \(config.autoConnect),
                 };
 
                 const tonBridge = trustwallet.tonBridge(walletInfo, ton);
@@ -159,8 +159,7 @@ public struct TrustWeb3Provider {
                   return provider;
                 }));
 
-                // TODO: remove after updating to trust
-                window.openmask = { tonconnect: tonBridge, provider: ton };
+                window.trustwalletTon = { tonconnect: tonBridge, provider: ton };
 
                 // Custom methods
                 ethereum.emitChainChanged = (chainId) => {
